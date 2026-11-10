@@ -30,8 +30,6 @@ type app struct {
 	colCounts   map[string]int
 	rows        []sideRow
 	list        ui.ListState
-	treeScroll  ui.ScrollState
-	selRow      int // ui.List choice; -1 none
 	selectedID  string
 	filter      string
 	lastFilter  string

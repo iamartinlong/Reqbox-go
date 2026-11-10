@@ -72,6 +72,27 @@ func BenchmarkRebuildRowsFiltered(b *testing.B) {
 	}
 }
 
+// BenchmarkApplyRequest measures saving one request: it replaces its row
+// summary, re-sorts and re-caches, and rebuilds the rows, in place of a
+// full workspace reload.
+func BenchmarkApplyRequest(b *testing.B) {
+	a := benchApp(10000, 100)
+	r := store.Request{
+		ID:           "req-5000",
+		CollectionID: a.reqs[5000].CollectionID,
+		Name:         "Renamed",
+		Method:       "POST",
+		URL:          "https://api.example.com/v1/renamed",
+		SortIndex:    5000,
+	}
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		r.Name = fmt.Sprintf("Renamed %d", i)
+		a.applyRequest(r)
+	}
+}
+
 // BenchmarkCollectionCounts measures the per-load counting refresh() does
 // for the header counts, in place of a scan per header and frame.
 func BenchmarkCollectionCounts(b *testing.B) {

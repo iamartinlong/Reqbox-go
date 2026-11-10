@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -84,11 +84,25 @@ func (a *app) rebuildRows() {
 		}
 	}
 	a.rows = rows
-	a.selRow = -1
-	for i, row := range rows {
-		if !row.header && !row.note && row.req.ID == a.selectedID {
-			a.selRow = i
-		}
+	a.list.Key = a.rowKey
+}
+
+// rowKey identifies a sidebar row for the virtual list, so its scroll place
+// and row state follow the item across filters and edits.
+func (a *app) rowKey(i int) any {
+	if i < 0 || i >= len(a.rows) {
+		return i
+	}
+	row := a.rows[i]
+	switch {
+	case row.header && row.colID != "":
+		return "h:" + row.colID
+	case row.header:
+		return "h:unsorted"
+	case row.note:
+		return "n:" + row.colID
+	default:
+		return "r:" + row.req.ID
 	}
 }
 
@@ -98,9 +112,49 @@ func (a *app) refresh() {
 	}
 	a.reqs, _ = a.st.ListRequestSummaries()
 	a.cols, _ = a.st.ListCollections()
-	// The header count is per collection and does not change while the
-	// filter does, so count once per load rather than once per header and
-	// frame.
+	a.reindexSummaries()
+	// Like the web: open the first request so the app never starts blank.
+	if a.selectedID == "" && len(a.reqs) > 0 {
+		a.selectedID = a.reqs[0].ID
+	}
+	a.rebuildRows()
+	a.reloadHistory()
+	a.loadEnvs()
+}
+
+// summaryOf turns a saved request into the sidebar's summary.
+func summaryOf(r store.Request) store.RequestSummary {
+	return store.RequestSummary{
+		ID:           r.ID,
+		CollectionID: r.CollectionID,
+		Name:         r.Name,
+		Method:       r.Method,
+		URL:          r.URL,
+		SortIndex:    r.SortIndex,
+		ExposeSlug:   r.ExposeSlug,
+		Exposed:      r.Exposed,
+	}
+}
+
+// summaryIndex finds the row summary of a request, or -1.
+func (a *app) summaryIndex(id string) int {
+	for i := range a.reqs {
+		if a.reqs[i].ID == id {
+			return i
+		}
+	}
+	return -1
+}
+
+// reindexSummaries sorts the summaries as the store lists them and rebuilds
+// the filter and header-count caches beside them.
+func (a *app) reindexSummaries() {
+	sort.SliceStable(a.reqs, func(i, j int) bool {
+		if a.reqs[i].SortIndex != a.reqs[j].SortIndex {
+			return a.reqs[i].SortIndex < a.reqs[j].SortIndex
+		}
+		return a.reqs[i].Name < a.reqs[j].Name
+	})
 	a.colCounts = make(map[string]int, len(a.cols))
 	a.reqSearch = make([]reqSearch, len(a.reqs))
 	for i, r := range a.reqs {
@@ -109,13 +163,28 @@ func (a *app) refresh() {
 		}
 		a.reqSearch[i] = reqSearch{name: strings.ToLower(r.Name), url: strings.ToLower(r.URL)}
 	}
-	// Like the web: open the first request so the app never starts blank.
-	if a.selectedID == "" && len(a.reqs) > 0 {
-		a.selectedID = a.reqs[0].ID
+}
+
+// applyRequest replaces or adds one row after the store saved it, without
+// reloading the whole workspace.
+func (a *app) applyRequest(r store.Request) {
+	s := summaryOf(r)
+	if i := a.summaryIndex(s.ID); i >= 0 {
+		a.reqs[i] = s
+	} else {
+		a.reqs = append(a.reqs, s)
 	}
+	a.reindexSummaries()
 	a.rebuildRows()
-	a.reloadHistory()
-	a.loadEnvs()
+}
+
+// removeRequest drops one row after the store deleted it.
+func (a *app) removeRequest(id string) {
+	if i := a.summaryIndex(id); i >= 0 {
+		a.reqs = append(a.reqs[:i], a.reqs[i+1:]...)
+	}
+	a.reindexSummaries()
+	a.rebuildRows()
 }
 
 // reloadHistory refreshes the history pane alone: a run adds a history
@@ -135,40 +204,51 @@ func (a *app) applyPending() {
 		a.rebuildRows()
 		return
 	case p.newRequest:
-		a.st.CreateRequest(store.Request{Name: tr("sidebar.newRequest"), Method: "GET"})
+		if r, err := a.st.CreateRequest(store.Request{Name: tr("sidebar.newRequest"), Method: "GET"}); err == nil {
+			a.applyRequest(r)
+		}
 		a.toastOK(tr("toast.requestCreated"))
 	case p.newCollection:
 		// The web asks for the name in its prompt dialog rather than
 		// creating with a default.
 		a.promptCollection()
 	case p.deleteReq != "":
-		a.st.DeleteRequest(p.deleteReq)
-		if a.selectedID == p.deleteReq {
+		id := p.deleteReq
+		a.st.DeleteRequest(id)
+		if a.selectedID == id {
 			a.selectedID = ""
 		}
+		a.removeRequest(id)
 		a.toastOK(tr("toast.requestDeleted"))
 	case p.deleteCol != "":
 		a.st.DeleteCollection(p.deleteCol)
 		a.toastOK(tr("toast.collectionDeleted"))
+		// The collection's requests survive with no collection: reload the
+		// tree so they show under UNSORTED.
+		a.refresh()
 	case p.deleteHist != "":
 		a.st.DeleteHistory(p.deleteHist)
+		a.reloadHistory()
 	case p.clearHist:
 		a.st.ClearHistory()
+		a.reloadHistory()
 		a.toastOK(tr("toast.historyCleared"))
 	case p.duplicate != "":
 		if dup, err := a.st.DuplicateRequest(p.duplicate); err == nil {
+			a.applyRequest(dup)
 			a.toastOK(tr("toast.duplicated", "name", dup.Name))
 		}
 	case p.rename != "":
 		if r, err := a.st.GetRequest(p.rename); err == nil {
 			r.Name = p.renameTo
-			a.st.UpdateRequest(r, false)
+			if updated, err := a.st.UpdateRequest(r, false); err == nil {
+				a.applyRequest(updated)
+			}
 		}
 	default:
 		return
 	}
 	a.pending = pending{}
-	a.refresh()
 }
 
 // sidebarPane mirrors the web sidebar: environment row, Requests/History
@@ -197,20 +277,16 @@ func (a *app) sidebarPane(c *ui.Context, p palette) {
 			return
 		}
 		a.filterRow(c, p)
-		// Plain rows in a scroll, not a ui.List: the list's selectable rows
-		// consume the clicks of the controls inside them (batch 23), which
-		// the tree's kebab menus and fold chevrons need. The scroll sits in
-		// a growing column, the batch-20 pattern.
+		// A virtual list: only the rows in view are built, so a large
+		// workspace scrolls without laying out every row each frame. It is
+		// not selectable (Selected stays nil), so the kebab menus and fold
+		// chevrons inside the rows keep their clicks; a click on the row
+		// itself chooses the request.
 		ui.Column(c).Grow(1).FillWidth().Children(func() {
-			ui.Scroll(c).FillHeight().FillWidth().Clip().
-				TrackScroll(&a.treeScroll).Children(func() {
-				ui.Column(c).FillWidth().Padding(4, 8, 12, 8).Children(func() {
-					for i := range a.rows {
-						a.sideRowView(c, p, i)
-					}
-					a.applyPending()
-				})
-			})
+			ui.List(c, &a.list, len(a.rows), func(i int) {
+				a.sideRowView(c, p, i)
+			}).Fill().Padding(4, 8, 12, 8)
+			a.applyPending()
 		})
 		a.footerRow(c, p)
 	})
@@ -449,11 +525,11 @@ func (a *app) colHeaderView(c *ui.Context, p palette, row sideRow) {
 		a.kebab(c, p, h, "c:"+row.colID, func(panel ui.Element) {
 			a.sideMenuItem(c, p, panel, iconPlus, tr("sidebar.newRequestHere"), false, func() {
 				id := row.colID
-				if _, err := a.st.CreateRequest(store.Request{
+				if r, err := a.st.CreateRequest(store.Request{
 					Name: tr("sidebar.untitledRequest"), Method: "GET", CollectionID: &id,
 				}); err == nil {
+					a.applyRequest(r)
 					a.toastOK(tr("toast.requestCreated"))
-					a.refresh()
 				}
 			})
 			a.sideMenuItem(c, p, panel, nil, tr("common.rename"), false, func() {
@@ -543,13 +619,13 @@ func (a *app) reqRowView(c *ui.Context, p palette, row sideRow) {
 				if on && rec.ExposeSlug == "" {
 					rec.ExposeSlug = a.suggestSlug(rec.Name)
 				}
-				if _, err := a.st.UpdateRequest(rec, false); err == nil {
+				if updated, err := a.st.UpdateRequest(rec, false); err == nil {
 					if on {
 						a.toastOK(tr("toast.mockPublished"))
 					} else {
 						a.toastOK(tr("toast.mockUnpublished"))
 					}
-					a.refresh()
+					a.applyRequest(updated)
 				}
 			})
 			a.sideMenuItem(c, p, panel, iconTrash, tr("common.delete"), true, func() {

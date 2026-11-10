@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.4 — 2026-11-10
+
+The title bar shows the app's version in small type after its name.
+
+The sidebar now virtualizes its rows: only the rows in view are built and
+laid out, so a workspace with tens of thousands of requests scrolls at a
+steady frame rate. Saving, creating, deleting, duplicating, renaming or
+publishing a request updates that row in place instead of reloading the
+whole workspace. Measured at 10k requests, saving a request drops from
+~80–100 ms to ~6 ms.
+
 ## 0.2.3 — 2026-11-10
 
 Performance release for large workspaces. The sidebar now loads request

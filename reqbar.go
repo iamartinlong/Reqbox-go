@@ -248,10 +248,10 @@ func (a *app) saveEdit() {
 	r.BodyType, r.Body, r.Form = a.edit.bodyType, a.bodyBuf.String(), a.edit.form
 	r.AuthType, r.Auth = a.edit.authType, a.edit.auth
 	r.Exposed, r.ExposeSlug = a.edit.exposed, a.edit.exposeSlug
-	if _, err := a.st.UpdateRequest(r, false); err == nil {
+	if updated, err := a.st.UpdateRequest(r, false); err == nil {
 		a.bodyBuf.MarkSaved()
 		a.edit.dirty = false
-		a.refresh()
+		a.applyRequest(updated)
 		a.toastOK(tr("toast.requestSaved"))
 	} else {
 		a.toastErr(tr("toast.cannotSave"))
