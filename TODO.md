@@ -11,11 +11,18 @@
       （2026-11-10，含 `.old-*` 更新备份与 Uninstall.exe），快捷方式均已指向 0.2.0
 - [x] **旧仓库已推送**：迁移标注/知识库同步/待办入口/收尾交接 4 次提交已推
       （`6a1bb39`…`862b5fb`），`mygo-example` 的 `main` 与 `origin/main` 齐平（2026-11-10）
-- [ ] **0.2.1 发版时**：确认构建生成 `0.2.0→0.2.1` delta（本仓库首次带 delta），并做一次应用内升级验证；
-      本版同时把显示名改成 Reqbox Go（`windows.displayName` + 窗口标题/UI 文案）
+- [x] **0.2.1 已发布**：构建生成 `0.2.0→0.2.1` delta（185 KB，本仓库首次带 delta）；
+      显示名改为 Reqbox Go（`windows.displayName` + 窗口标题/UI 文案）；线上 feed 与
+      delta SHA256 校验通过（2026-11-10）
+- [ ] **应用内升级验证**：启动已安装的 0.2.0，确认检查到 0.2.1、只下载 delta，重启后
+      版本为 0.2.1 且窗口标题显示 Reqbox Go
 - [x] **v0.2.0 Release 资产已核对**：`reqbox-native-setup-0.2.0-amd64.exe`、
       `reqbox-native-0.2.0-windows-amd64.tar.gz`、`update-windows-amd64.json`（签名）、
       `SHA256SUMS`、`install.ps1` 共 5 个附件齐全（2026-11-10）
+- [x] **v0.2.1 Release 资产已核对**：`reqbox-native-setup-0.2.1-amd64.exe`、
+      `reqbox-native-0.2.1-windows-amd64.tar.gz`、`reqbox-native-0.2.0-to-0.2.1-windows-amd64.delta`、
+      `update-windows-amd64.json`、`SHA256SUMS`、`install.ps1` 共 6 个附件；latest feed
+      已指向 0.2.1（2026-11-10）
 
 ## 功能收尾（非阻塞，按需）
 
