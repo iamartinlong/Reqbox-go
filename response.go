@@ -284,7 +284,7 @@ func (a *app) responsePane(c *ui.Context, p palette) {
 }
 
 // respWaiting is the web's loading skeleton: a h-9 waiting bar over five
-// pulse bars. MyGo has no pulse animation, so the bars sit still.
+// pulse bars, which fade as Tailwind's animate-pulse does.
 func (a *app) respWaiting(c *ui.Context, p palette) {
 	ui.Row(c).Height(36).Padding(0, 16, 0, 16).AlignItems(ui.Center).
 		BorderWidth(0, 0, 1, 0).BorderColor(p.border.color()).
@@ -292,15 +292,22 @@ func (a *app) respWaiting(c *ui.Context, p palette) {
 			ui.Text(c, tr("resp.waiting")).FontSize(11).
 				Font("JetBrains Mono").SingleLine().TextColor(p.mutedFg.color())
 		})
-	ui.Column(c).Grow(1).FillHeight().Padding(16, 16, 16, 16).Gap(8).
-		Children(func() {
-			for _, w := range []float32{92, 78, 84, 60, 70} {
-				ui.Row(c).FillWidth().Height(10).Children(func() {
-					ui.Row(c).WidthPercent(w).Height(10).Radius(4).
-						Background(p.muted.color().Alpha(0.7))
-				})
-			}
-		})
+	body := ui.Column(c).Grow(1).FillHeight().Padding(16, 16, 16, 16).Gap(8)
+	// animate-pulse: opacity 1, then .5 at half time, then 1 again, for
+	// two seconds and over, with cubic-bezier(.4, 0, .6, 1) between.
+	op := body.Keyframes("skeleton-pulse", []ui.Keyframe{
+		{At: 0, Value: 1},
+		{At: time.Second, Value: 0.5, Ease: ui.CubicBezier(0.4, 0, 0.6, 1)},
+		{At: 2 * time.Second, Value: 1, Ease: ui.CubicBezier(0.4, 0, 0.6, 1)},
+	}, ui.KeyframeOptions{Repeat: ui.RepeatForever})
+	body.Children(func() {
+		for _, w := range []float32{92, 78, 84, 60, 70} {
+			ui.Row(c).FillWidth().Height(10).Children(func() {
+				ui.Row(c).WidthPercent(w).Height(10).Radius(4).
+					Background(p.muted.color().Alpha(0.7)).Opacity(op)
+			})
+		}
+	})
 }
 
 // respCenter is the web's centred empty state: a mono eyebrow, the hint

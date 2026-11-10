@@ -40,8 +40,12 @@
 
 - [ ] **历史重放保存实际发送值**：现在 `history` 存的是发送前草稿快照，重放时请求头/请求体与当时实际发送的不完全一致；
       需给共享 store 的 history 表加字段（影响旧仓库 webview 版 DB schema，单独评估后再动）
-- [ ] **等待骨架 pulse 动画**：目前是静态骨架，mygo 有动画能力可补
-- [ ] **toast 图标细节对齐 sonner**：形状已对，图标与间距未逐像素
+- [x] **等待骨架 pulse 动画**：按 Tailwind `animate-pulse`（2s、cubic-bezier(.4,0,.6,1)）
+      用 `Keyframes` + `RepeatForever` 实现 1→.5→1 循环；实机截图确认明暗变化（2026-11-10）
+- [x] **toast 图标细节对齐 sonner**：16px Lucide 图标（circle-check / octagon-x /
+      triangle-alert / info）、356px 宽、16px 内边距、6px 图标间距、32px 视口偏移、
+      14px toast 间距、popover 配色、去掉关闭按钮；实机截图核对（2026-11-10）
+- [x] **mygo 内置文案中文**：引入 `locales/zh-Hans`，去掉启动时的英文回退警告（2026-11-10）
 
 ## 维护
 
