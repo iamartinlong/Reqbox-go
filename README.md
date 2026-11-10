@@ -5,6 +5,8 @@ SQLite 数据格式。2026-11-10 从
 [iamartinlong/mygo-example](https://github.com/iamartinlong/mygo-example) 的
 `reqbox-native/` 分离到本仓库（v0.1.2）。
 
+> 剩余待办、已知差距与有意差异见 [TODO.md](TODO.md)。
+
 ## 功能
 
 - 请求编辑：方法/URL、Params / Headers / Form KV、Body、Auth、cURL 导入
