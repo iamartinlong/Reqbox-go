@@ -119,8 +119,8 @@ func (a *app) pal() palette {
 	return light
 }
 
-// topBar mirrors the web chrome: Mark + wordmark + LOCAL badge left,
-// health, the language menu and the theme toggle right.
+// topBar mirrors the web chrome: Mark + wordmark + version + LOCAL badge
+// left, health, the language menu and the theme toggle right.
 func (a *app) topBar(c *ui.Context, p palette) {
 	bar := c.TitleBar()
 	ui.Column(c).Children(func() {
@@ -132,8 +132,15 @@ func (a *app) topBar(c *ui.Context, p palette) {
 				ui.Row(c).Gap(8).AlignItems(ui.Center).Children(func() {
 					ui.Icon(c, iconMark).Size(18, 18).
 						TextColor(p.foreground.color())
-					ui.Text(c, tr("app.name")).FontSize(13).Bold().
-						SingleLine()
+					ui.Row(c).Gap(5).AlignItems(ui.Center).Children(func() {
+						ui.Text(c, tr("app.name")).FontSize(13).Bold().
+							SingleLine()
+						// The build's version, small after the name.
+						if v := mygo.App.Version(); v != "" {
+							ui.Text(c, "v"+v).FontSize(10).Font("JetBrains Mono").
+								SingleLine().TextColor(p.mutedFg.color().Alpha(0.65))
+						}
+					})
 					badge(c, p, tr("app.local"))
 				})
 				ui.Row(c).Grow(1)
