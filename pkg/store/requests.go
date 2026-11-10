@@ -92,6 +92,47 @@ func (s *Store) ListRequests() ([]Request, error) {
 	return out, rows.Err()
 }
 
+// RequestSummary is a saved request without its payload, for lists such as
+// the sidebar, which only need what names and groups a row.
+type RequestSummary struct {
+	ID           string
+	CollectionID *string
+	Name         string
+	Method       string
+	URL          string
+	SortIndex    int
+	ExposeSlug   string
+	Exposed      bool
+}
+
+// ListRequestSummaries returns every saved request without its params,
+// headers, body and auth, in the order ListRequests returns them: much less
+// to read and decode when only the request list is shown.
+func (s *Store) ListRequestSummaries() ([]RequestSummary, error) {
+	rows, err := s.db.Query(`SELECT id, collection_id, name, method, url, sort_index, expose_slug, exposed
+		FROM requests ORDER BY sort_index, name`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := make([]RequestSummary, 0)
+	for rows.Next() {
+		var r RequestSummary
+		var collectionID sql.NullString
+		if err := rows.Scan(&r.ID, &collectionID, &r.Name, &r.Method, &r.URL,
+			&r.SortIndex, &r.ExposeSlug, &r.Exposed); err != nil {
+			return nil, err
+		}
+		if collectionID.Valid && collectionID.String != "" {
+			id := collectionID.String
+			r.CollectionID = &id
+		}
+		out = append(out, r)
+	}
+	return out, rows.Err()
+}
+
 // GetRequest loads one request.
 func (s *Store) GetRequest(id string) (Request, error) {
 	row := s.db.QueryRow(`SELECT `+requestColumns+` FROM requests WHERE id = ?`, id)

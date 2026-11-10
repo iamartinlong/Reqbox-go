@@ -77,7 +77,7 @@ func (a *app) send() {
 				a.run.resp = &resp
 				a.resetRespBuf()
 			}
-			a.refresh()
+			a.reloadHistory()
 		})
 	}()
 }

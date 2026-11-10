@@ -20,7 +20,13 @@ type sideRow struct {
 	indent bool
 	title  string
 	colID  string // header's collection; "" for UNSORTED
-	req    store.Request
+	req    store.RequestSummary
+}
+
+// reqSearch is a request's name and URL case-folded once per load, so the
+// filter does not fold the whole workspace on every keystroke.
+type reqSearch struct {
+	name, url string
 }
 
 // pending holds actions the row builders noted, applied after the list
@@ -40,15 +46,11 @@ type pending struct {
 
 func (a *app) rebuildRows() {
 	needle := strings.ToLower(a.filter)
-	match := func(r store.Request) bool {
-		return needle == "" ||
-			strings.Contains(strings.ToLower(r.Name), needle) ||
-			strings.Contains(strings.ToLower(r.URL), needle)
-	}
-	byCol := map[string][]store.Request{}
-	var unsorted []store.Request
-	for _, r := range a.reqs {
-		if !match(r) {
+	byCol := map[string][]store.RequestSummary{}
+	var unsorted []store.RequestSummary
+	for i, r := range a.reqs {
+		if needle != "" && !strings.Contains(a.reqSearch[i].name, needle) &&
+			!strings.Contains(a.reqSearch[i].url, needle) {
 			continue
 		}
 		if r.CollectionID == nil {
@@ -94,16 +96,33 @@ func (a *app) refresh() {
 	if a.st == nil {
 		return
 	}
-	a.reqs, _ = a.st.ListRequests()
+	a.reqs, _ = a.st.ListRequestSummaries()
 	a.cols, _ = a.st.ListCollections()
+	// The header count is per collection and does not change while the
+	// filter does, so count once per load rather than once per header and
+	// frame.
+	a.colCounts = make(map[string]int, len(a.cols))
+	a.reqSearch = make([]reqSearch, len(a.reqs))
+	for i, r := range a.reqs {
+		if r.CollectionID != nil {
+			a.colCounts[*r.CollectionID]++
+		}
+		a.reqSearch[i] = reqSearch{name: strings.ToLower(r.Name), url: strings.ToLower(r.URL)}
+	}
 	// Like the web: open the first request so the app never starts blank.
 	if a.selectedID == "" && len(a.reqs) > 0 {
 		a.selectedID = a.reqs[0].ID
 	}
 	a.rebuildRows()
+	a.reloadHistory()
+	a.loadEnvs()
+}
+
+// reloadHistory refreshes the history pane alone: a run adds a history
+// entry but does not change the request tree.
+func (a *app) reloadHistory() {
 	a.hist, _ = a.st.ListHistory(a.histFilter, 100)
 	a.histSel = -1
-	a.loadEnvs()
 }
 
 func (a *app) applyPending() {
@@ -423,7 +442,7 @@ func (a *app) colHeaderView(c *ui.Context, p palette, row sideRow) {
 		ui.Text(c, row.title).FontSize(12).FontWeight(500).SingleLine().
 			TextColor(p.foreground.color().Alpha(0.85)).Grow(1).
 			Basis(0).MinWidth(0)
-		if n := len(a.reqsIn(row.colID)); n > 0 {
+		if n := a.colCounts[row.colID]; n > 0 {
 			ui.Text(c, fmt.Sprint(n)).FontSize(10).Font("JetBrains Mono").
 				TextColor(p.mutedFg.color().Alpha(0.7))
 		}
@@ -468,17 +487,6 @@ func (a *app) colHeaderView(c *ui.Context, p palette, row sideRow) {
 		// loop, so its index stays valid.
 		a.pending.rebuild = true
 	}
-}
-
-// reqsIn counts the requests a collection holds, for its header count.
-func (a *app) reqsIn(colID string) []store.Request {
-	var out []store.Request
-	for _, r := range a.reqs {
-		if r.CollectionID != nil && *r.CollectionID == colID {
-			out = append(out, r)
-		}
-	}
-	return out
 }
 
 // reqRowView is a request line: the method tag, name and path, the
@@ -527,7 +535,10 @@ func (a *app) reqRowView(c *ui.Context, p palette, row sideRow) {
 				label = tr("sidebar.unpublishMock")
 			}
 			a.sideMenuItem(c, p, panel, iconGlobe, label, false, func() {
-				rec := r
+				rec, err := a.st.GetRequest(r.ID)
+				if err != nil {
+					return
+				}
 				rec.Exposed = on
 				if on && rec.ExposeSlug == "" {
 					rec.ExposeSlug = a.suggestSlug(rec.Name)

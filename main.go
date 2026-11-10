@@ -24,8 +24,10 @@ type app struct {
 	sidebar float32 // sidebar width in DIPs, ui.Split drags it
 
 	st          *store.Store
-	reqs        []store.Request
+	reqs        []store.RequestSummary
+	reqSearch   []reqSearch
 	cols        []store.Collection
+	colCounts   map[string]int
 	rows        []sideRow
 	list        ui.ListState
 	treeScroll  ui.ScrollState

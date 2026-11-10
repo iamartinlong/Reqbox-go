@@ -126,6 +126,13 @@ go test ./...                                   # 单元测试
 `.github/workflows/ci.yml` 会在每次 push / pull request 时执行上述检查，并做一次
 无签名的打包冒烟构建。
 
+性能基准（不随 CI 默认运行）：
+
+```sh
+go test ./pkg/store -run '^$' -bench List -benchmem
+go test . -run '^$' -bench RebuildRows -benchmem
+```
+
 ## 快捷键
 
 | 快捷键 | 功能 |

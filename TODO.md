@@ -41,6 +41,14 @@
 
 - [x] **CI 已接入**：`.github/workflows/ci.yml`，push/PR 跑 `go build`、`go vet`、
       `mygo vet`、`go test` 与无签名打包冒烟（2026-11-10）
+- [x] **侧栏大工作区性能**：集合计数改为加载时缓存（原 `reqsIn` 每帧 O(集合×请求)，
+      100 集合/10k 请求约 21.7ms/帧）；请求树改读 `RequestSummary`（10k 加载
+      521ms/114MB → 76–103ms/9MB）；筛选大小写预计算；发送后只刷新历史。
+      基准见 `pkg/store/bench_test.go`、`perf_bench_test.go`（2026-11-10）
+- [ ] **侧栏虚拟化**：当前筛选/折叠重建全部行，每帧也布局全部行；10k+ 请求时滚动
+      帧率仍有风险，考虑 `ui.List` 或按视口裁剪
+- [ ] **增量刷新**：`refresh()` 仍全量读摘要（10k ≈ 70–100ms）；保存/发送可只更新
+      受影响条目，避免大工作区卡顿
 - [ ] **`pkg/store`、`pkg/runner` 双份同步**：本仓库一份、旧仓库 `reqbox-desktop` 一份；共享逻辑改动要两边一起改
 - [ ] **评估消除双份**：让旧仓库 webview 版改为依赖本仓库模块，或把共享包抽成独立模块
 - [ ] 若以后要预发布（beta），在插件侧配 `SetPrereleases`
