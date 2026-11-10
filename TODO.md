@@ -10,6 +10,9 @@
 - [x] **旧仓库已推送**：迁移标注/知识库同步/待办入口/收尾交接 4 次提交已推
       （`6a1bb39`…`862b5fb`），`mygo-example` 的 `main` 与 `origin/main` 齐平（2026-11-10）
 - [ ] **0.2.1 发版时**：确认构建生成 `0.2.0→0.2.1` delta（本仓库首次带 delta），并做一次应用内升级验证
+- [x] **v0.2.0 Release 资产已核对**：`reqbox-native-setup-0.2.0-amd64.exe`、
+      `reqbox-native-0.2.0-windows-amd64.tar.gz`、`update-windows-amd64.json`（签名）、
+      `SHA256SUMS`、`install.ps1` 共 5 个附件齐全（2026-11-10）
 
 ## 功能收尾（非阻塞，按需）
 
@@ -23,6 +26,8 @@
 - [ ] **`pkg/store`、`pkg/runner` 双份同步**：本仓库一份、旧仓库 `reqbox-desktop` 一份；共享逻辑改动要两边一起改
 - [ ] **评估消除双份**：让旧仓库 webview 版改为依赖本仓库模块，或把共享包抽成独立模块
 - [ ] 若以后要预发布（beta），在插件侧配 `SetPrereleases`
+- [ ] **每次发版核对 Release 附件**：安装器、整包、签名 `update-windows-amd64.json`、
+      `SHA256SUMS` 齐全；带 delta 的版本另核对增量包能被旧版拉取
 
 ## 有意差异（别当缺陷改）
 
