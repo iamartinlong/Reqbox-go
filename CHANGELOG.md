@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.1 — 2026-11-10
+
+Maintenance release: the app now shows as **Reqbox Go** — in the window
+title, the Windows shortcuts, installer and app entry. The executable,
+install folder, slug and user data directory keep their `Reqbox Native` /
+`reqbox-native` names, so existing installs keep their data and update in
+place.
+
+It also carries the first delta update from this repository
+(`0.2.0 → 0.2.1`), so an installed 0.2.0 downloads only what changed
+instead of the whole archive.
+
 ## 0.2.0 — 2026-11-10
 
 First release from the app's own repository: the same code as 0.1.2, moved

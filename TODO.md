@@ -1,6 +1,6 @@
 # 待办
 
-> 更新：2026-11-10。当前版本 **v0.2.0**（本仓库首个发布）。完成一项就勾掉并补一句结果；
+> 更新：2026-11-10。当前版本 **v0.2.1**。完成一项就勾掉并补一句结果；
 > 文末「有意差异」是设计取舍，别当缺陷改。
 
 ## 立即（迁移收尾）
@@ -11,7 +11,8 @@
       （2026-11-10，含 `.old-*` 更新备份与 Uninstall.exe），快捷方式均已指向 0.2.0
 - [x] **旧仓库已推送**：迁移标注/知识库同步/待办入口/收尾交接 4 次提交已推
       （`6a1bb39`…`862b5fb`），`mygo-example` 的 `main` 与 `origin/main` 齐平（2026-11-10）
-- [ ] **0.2.1 发版时**：确认构建生成 `0.2.0→0.2.1` delta（本仓库首次带 delta），并做一次应用内升级验证
+- [ ] **0.2.1 发版时**：确认构建生成 `0.2.0→0.2.1` delta（本仓库首次带 delta），并做一次应用内升级验证；
+      本版同时把显示名改成 Reqbox Go（`windows.displayName` + 窗口标题/UI 文案）
 - [x] **v0.2.0 Release 资产已核对**：`reqbox-native-setup-0.2.0-amd64.exe`、
       `reqbox-native-0.2.0-windows-amd64.tar.gz`、`update-windows-amd64.json`（签名）、
       `SHA256SUMS`、`install.ps1` 共 5 个附件齐全（2026-11-10）
@@ -32,6 +33,10 @@
       `SHA256SUMS` 齐全；带 delta 的版本另核对增量包能被旧版拉取
 
 ## 有意差异（别当缺陷改）
+
+- 显示名 Reqbox Go：窗口标题、Windows 快捷方式/安装器/应用列表用新名；可执行文件、
+  安装目录、slug 与用户数据目录仍是 `Reqbox Native` / `reqbox-native`，保证已有安装
+  的数据与自动更新连续（改名只动 `windows.displayName` 与 UI 文案）
 
 - KV 行 id：web 用 `crypto.randomUUID()`，原生用 8 字节随机 hex——都唯一，库间互换无碍
 - Mock URL：原生显示网关实际端口（web 显示页面 origin；5178 被占时两者不同）

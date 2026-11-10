@@ -278,9 +278,8 @@ func main() {
 	a := &app{sidebar: 290, sideTab: "requests",
 		run: runState{timeout: "30", follow: true, verify: true}}
 	// Background update check 10s after launch, then daily; the window
-	// offers install/relaunch. The feed lives in mygo.json (tagPrefix
-	// reqbox-native-v keeps this app's releases apart from the webview
-	// build's reqbox-v and todo-app's v*).
+	// offers install/relaunch. The feed lives in mygo.json (this repository
+	// serves only this app's releases, so tagPrefix is plain v).
 	mygo.Use(updater.Plugin)
 	// Before Run: startLocale computes the shown locale with the languages
 	// set at that point, so ours must be in before it does.
@@ -303,7 +302,7 @@ func main() {
 		a.startMockGateway()
 
 		a.win = mygo.NewWindow(mygo.WindowOptions{
-			Title:     "Reqbox",
+			Title:     "Reqbox Go",
 			Width:     1280,
 			Height:    820,
 			MinWidth:  960,
