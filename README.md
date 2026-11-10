@@ -39,7 +39,11 @@ Reqbox Go 是 Reqbox 的原生桌面客户端：使用 Go 与
 
 ## 环境要求
 
-- Windows 10 / 11 x64（当前打包目标）
+**运行安装版**：Windows 10 / 11 x64。无需安装 Go、Node、Python 或 WebView——Go 运行时
+已静态链接进可执行文件（`CGO_ENABLED=0`），只依赖 Windows 自带的系统 DLL。
+
+**从源码开发 / 构建**：
+
 - Go 1.27.3 或更高（低版本会自动拉取对应工具链）
 - 首次构建需要网络下载依赖
 
