@@ -3,6 +3,7 @@
 [![CI](https://github.com/iamartinlong/Reqbox-go/actions/workflows/ci.yml/badge.svg)](https://github.com/iamartinlong/Reqbox-go/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/iamartinlong/Reqbox-go)](https://github.com/iamartinlong/Reqbox-go/releases)
 [![Go](https://img.shields.io/badge/Go-1.27.3-00ADD8?logo=go)](https://go.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Reqbox Go 是 Reqbox 的原生桌面客户端：使用 Go 与
 [mygo](https://github.com/egoist/mygo) 即时模式 UI 直接绘制界面，不依赖 WebView；
@@ -152,3 +153,7 @@ go test . -run '^$' -bench RebuildRows -benchmem
 ## 国际化
 
 界面内置 English 与简体中文，默认跟随系统语言，可在应用内切换。
+
+## 许可证
+
+本项目使用 [MIT License](LICENSE) 发布。第三方依赖、图标与字体资源遵循其各自许可证。

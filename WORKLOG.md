@@ -28,6 +28,7 @@
 - **仓库/分支**：`iamartinlong/Reqbox-go`，`main`，最新提交 `1e563b0`；工作区干净。
 - **版本/发布**：`mygo.json` 为 0.2.5；GitHub Release `v0.2.5` 已发布（非草稿），8 个附件；
   latest feed 已指向 0.2.5。
+- **许可证**：MIT，见 `LICENSE`。
 - **安装版**：`D:\soft\Reqbox Native\Reqbox Native.exe`，FileVersion **0.2.5**；
   桌面与开始菜单快捷方式为 `Reqbox Go.lnk`。
 - **用户数据**：`%APPDATA%\Reqbox Native\reqbox.db`（SQLite）与同目录 `updater.json`。
