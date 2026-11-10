@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.5 — 2026-11-10
+
+The waiting skeleton now pulses as the web's does — Tailwind's animate-pulse:
+two seconds, opacity 1 → .5 → 1 — and toasts match Sonner: 16px Lucide status
+icons (circle-check, octagon-x, triangle-alert, info), 356px popovers with
+16px padding and the same spacing, popover colors, and no close button, as
+Sonner's default. MyGo's own strings also speak Chinese now, so the startup
+warning about missing zh-Hans translations is gone.
+
 ## 0.2.4 — 2026-11-10
 
 The title bar shows the app's version in small type after its name.
