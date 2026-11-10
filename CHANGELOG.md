@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 — 2026-11-10
+
+First release from the app's own repository: the same code as 0.1.2, moved
+out of the mygo-example monorepo (see the migration record there). The
+update feed now points at this repository, so install this version once by
+hand if you run 0.1.2 or earlier; automatic updates resume after that.
+
+No delta update this time: this repository has no 0.1.2 release to diff
+against. The next release will carry one for 0.2.0.
+
 ## 0.1.2 — 2026-11-10
 
 Maintenance release: the app is unchanged from 0.1.1. It exists to exercise

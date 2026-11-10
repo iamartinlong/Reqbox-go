@@ -34,7 +34,8 @@ MYGO_UPDATER_PRIVATE_KEY="$(cat "$APPDATA/mygo/update-keys/reqbox-native/mygo-up
 
 `mygo.json` 的 `updates.github` 指向本仓库，`tagPrefix` 为 `v`。**0.1.2 及更早的
 安装版是从旧仓库发布的（feed 指向 mygo-example），需要手动安装一次本仓库的版本**，
-之后由本仓库自动更新。首个版本（如 v0.2.0）发布后即可恢复增量更新。
+之后由本仓库自动更新。v0.2.0 是本仓库首个发布（无 delta，本仓库没有 0.1.2 可对比）；
+下一个版本开始恢复增量更新。
 
 ## 目录
 
@@ -52,3 +53,4 @@ mygo.json           打包与更新配置
 - 2026-11-06 起路线 B：原生重写，批次与对照记录见旧仓库
   `docs/01-research/reqbox-migration.md`
 - 2026-11-10 发版 v0.1.2（首个 delta 22KB），同日迁到本仓库
+- 2026-11-10 v0.2.0：本仓库首个发布（同 0.1.2 代码，切换更新源；无 delta）
