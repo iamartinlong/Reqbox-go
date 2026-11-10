@@ -17,8 +17,11 @@
 - [x] **0.2.2 已发布**：更新弹窗名称同步为 Reqbox Go（启动时 `App.SetName`，用户数据目录
       固定回 `Reqbox Native` 以保留设置/历史）；deltas `0.2.1→0.2.2` 384 KB、`0.2.0→0.2.2`
       368 KB；线上 feed 与 SHA256 校验通过（2026-11-10）
-- [ ] **应用内升级验证**：启动已安装的 0.2.0/0.2.1，确认检查到 0.2.2、只下载 delta，重启后
-      版本为 0.2.2，更新弹窗与窗口标题都显示 Reqbox Go
+- [x] **应用内升级验证**：已由 0.2.0 应用内升级到 0.2.2（走 delta），主界面名称已显示
+      Reqbox Go（2026-11-10）
+- [x] **快捷方式名称迁移**：原地更新不会重写 `.lnk`；已把桌面/开始菜单的
+      `Reqbox Native.lnk` 改名为 `Reqbox Go.lnk`（目标不变，2026-11-10）。全新安装 0.2.2
+      会按 `windows.displayName` 直接创建 `Reqbox Go.lnk`
 - [x] **v0.2.0 Release 资产已核对**：`reqbox-native-setup-0.2.0-amd64.exe`、
       `reqbox-native-0.2.0-windows-amd64.tar.gz`、`update-windows-amd64.json`（签名）、
       `SHA256SUMS`、`install.ps1` 共 5 个附件齐全（2026-11-10）
