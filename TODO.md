@@ -5,8 +5,10 @@
 
 ## 立即（迁移收尾）
 
-- [ ] **手动安装一次 v0.2.0**：本地安装版仍是 0.1.2、feed 指旧仓库；装完后
-      `%LOCALAPPDATA%\Programs\Reqbox Native\Reqbox Native.exe` 应为 0.2.0，之后更新走本仓库
+- [x] **手动安装一次 v0.2.0**：已装在 `D:\soft\Reqbox Native`（FileVersion 0.2.0；
+      开始菜单与桌面快捷方式均指向此处，2026-11-10 核对），之后更新走本仓库
+- [ ] **清理遗留的 0.1.2 安装目录**：`%LOCALAPPDATA%\Programs\Reqbox Native` 仍是
+      0.1.2（含 `.old-*` 更新备份），已无快捷方式指向；确认无用后手动删除，避免误启动旧 feed
 - [x] **旧仓库已推送**：迁移标注/知识库同步/待办入口/收尾交接 4 次提交已推
       （`6a1bb39`…`862b5fb`），`mygo-example` 的 `main` 与 `origin/main` 齐平（2026-11-10）
 - [ ] **0.2.1 发版时**：确认构建生成 `0.2.0→0.2.1` delta（本仓库首次带 delta），并做一次应用内升级验证
