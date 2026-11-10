@@ -1,6 +1,6 @@
 # 待办
 
-> 更新：2026-11-10。当前版本 **v0.2.1**。完成一项就勾掉并补一句结果；
+> 更新：2026-11-10。当前版本 **v0.2.2**。完成一项就勾掉并补一句结果；
 > 文末「有意差异」是设计取舍，别当缺陷改。
 
 ## 立即（迁移收尾）
@@ -14,8 +14,11 @@
 - [x] **0.2.1 已发布**：构建生成 `0.2.0→0.2.1` delta（185 KB，本仓库首次带 delta）；
       显示名改为 Reqbox Go（`windows.displayName` + 窗口标题/UI 文案）；线上 feed 与
       delta SHA256 校验通过（2026-11-10）
-- [ ] **应用内升级验证**：启动已安装的 0.2.0，确认检查到 0.2.1、只下载 delta，重启后
-      版本为 0.2.1 且窗口标题显示 Reqbox Go
+- [x] **0.2.2 已发布**：更新弹窗名称同步为 Reqbox Go（启动时 `App.SetName`，用户数据目录
+      固定回 `Reqbox Native` 以保留设置/历史）；deltas `0.2.1→0.2.2` 384 KB、`0.2.0→0.2.2`
+      368 KB；线上 feed 与 SHA256 校验通过（2026-11-10）
+- [ ] **应用内升级验证**：启动已安装的 0.2.0/0.2.1，确认检查到 0.2.2、只下载 delta，重启后
+      版本为 0.2.2，更新弹窗与窗口标题都显示 Reqbox Go
 - [x] **v0.2.0 Release 资产已核对**：`reqbox-native-setup-0.2.0-amd64.exe`、
       `reqbox-native-0.2.0-windows-amd64.tar.gz`、`update-windows-amd64.json`（签名）、
       `SHA256SUMS`、`install.ps1` 共 5 个附件齐全（2026-11-10）
@@ -33,6 +36,8 @@
 
 ## 维护
 
+- [x] **CI 已接入**：`.github/workflows/ci.yml`，push/PR 跑 `go build`、`go vet`、
+      `mygo vet`、`go test` 与无签名打包冒烟（2026-11-10）
 - [ ] **`pkg/store`、`pkg/runner` 双份同步**：本仓库一份、旧仓库 `reqbox-desktop` 一份；共享逻辑改动要两边一起改
 - [ ] **评估消除双份**：让旧仓库 webview 版改为依赖本仓库模块，或把共享包抽成独立模块
 - [ ] 若以后要预发布（beta），在插件侧配 `SetPrereleases`
@@ -41,9 +46,9 @@
 
 ## 有意差异（别当缺陷改）
 
-- 显示名 Reqbox Go：窗口标题、Windows 快捷方式/安装器/应用列表用新名；可执行文件、
+- 显示名 Reqbox Go：窗口标题、更新弹窗、Windows 快捷方式/安装器/应用列表用新名；可执行文件、
   安装目录、slug 与用户数据目录仍是 `Reqbox Native` / `reqbox-native`，保证已有安装
-  的数据与自动更新连续（改名只动 `windows.displayName` 与 UI 文案）
+  的数据与自动更新连续（改名只动 `windows.displayName`、启动时 `App.SetName` 与 UI 文案）
 
 - KV 行 id：web 用 `crypto.randomUUID()`，原生用 8 字节随机 hex——都唯一，库间互换无碍
 - Mock URL：原生显示网关实际端口（web 显示页面 origin；5178 被占时两者不同）

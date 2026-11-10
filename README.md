@@ -1,13 +1,15 @@
 # Reqbox Go
 
+[![CI](https://github.com/iamartinlong/Reqbox-go/actions/workflows/ci.yml/badge.svg)](https://github.com/iamartinlong/Reqbox-go/actions/workflows/ci.yml)
+
 Reqbox 的原生桌面版：mygo 原生 UI（Go 直接绘制，无 WebView），与 Reqbox 共用
 SQLite 数据格式。2026-11-10 从
 [iamartinlong/mygo-example](https://github.com/iamartinlong/mygo-example) 的
 `reqbox-native/` 分离到本仓库（v0.1.2）。
 
-> 显示名（窗口标题、Windows 快捷方式/安装器/应用列表）为 **Reqbox Go**；可执行文件、
-> 安装目录、slug 与用户数据目录仍沿用 `Reqbox Native` / `reqbox-native`，以保证已有
-> 安装的数据与自动更新连续。详见 [TODO.md](TODO.md) 的「有意差异」。
+> 显示名（窗口标题、更新弹窗、Windows 快捷方式/安装器/应用列表）为 **Reqbox Go**；
+> 可执行文件、安装目录、slug 与用户数据目录仍沿用 `Reqbox Native` / `reqbox-native`，
+> 以保证已有安装的数据与自动更新连续。详见 [TODO.md](TODO.md) 的「有意差异」。
 
 > 剩余待办、已知差距与有意差异见 [TODO.md](TODO.md)。
 
@@ -25,6 +27,9 @@ SQLite 数据格式。2026-11-10 从
 go run .          # 开发运行（Go ≥ 1.27.3；低版本 GOTOOLCHAIN=auto 自动拉取）
 go test ./...     # pkg/store 与 pkg/runner 的测试
 ```
+
+每次 push / PR 由 GitHub Actions 跑 `.github/workflows/ci.yml`：`go build`、
+`go vet`、`mygo vet`、`go test` 与无签名打包冒烟。
 
 签名构建（发布用；密钥在仓库外，不入库）：
 
@@ -60,4 +65,6 @@ mygo.json           打包与更新配置
   `docs/01-research/reqbox-migration.md`
 - 2026-11-10 发版 v0.1.2（首个 delta 22KB），同日迁到本仓库
 - 2026-11-10 v0.2.0：本仓库首个发布（同 0.1.2 代码，切换更新源；无 delta）
-- 2026-11-10 v0.2.1：显示名改为 Reqbox Go；本仓库首个 delta（0.2.0→0.2.1，23 KB）
+- 2026-11-10 v0.2.1：显示名改为 Reqbox Go；本仓库首个 delta（0.2.0→0.2.1，185 KB）
+- 2026-11-10 v0.2.2：更新弹窗名称同步为 Reqbox Go；新增 CI；双 delta（0.2.1→0.2.2 384 KB、
+  0.2.0→0.2.2 368 KB）
