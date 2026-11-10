@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.2 — 2026-11-10
+
+The update window now calls the app **Reqbox Go** as well: its messages took
+the name from the build, which still says Reqbox Native. The app now sets its
+shown name at startup and pins the user data directory to the Reqbox Native
+one, so settings, history and in-place updates carry over. The executable,
+install folder and data directory keep their old names, as in 0.2.1.
+
 ## 0.2.1 — 2026-11-10
 
 Maintenance release: the app now shows as **Reqbox Go** — in the window

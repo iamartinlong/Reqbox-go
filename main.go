@@ -6,6 +6,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"path/filepath"
 	"syscall"
 	"unsafe"
@@ -277,6 +278,13 @@ func (a *app) loadTheme() {
 func main() {
 	a := &app{sidebar: 290, sideTab: "requests",
 		run: runState{timeout: "30", follow: true, verify: true}}
+	// What the window and the update messages call the app. The executable,
+	// install folder and user data directory keep the Reqbox Native names,
+	// so an installed app keeps its data and updates in place.
+	mygo.App.SetName("Reqbox Go")
+	if dir, err := os.UserConfigDir(); err == nil {
+		mygo.App.SetPath(mygo.PathUserData, filepath.Join(dir, "Reqbox Native"))
+	}
 	// Background update check 10s after launch, then daily; the window
 	// offers install/relaunch. The feed lives in mygo.json (this repository
 	// serves only this app's releases, so tagPrefix is plain v).
