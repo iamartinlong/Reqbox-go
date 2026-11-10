@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.3 — 2026-11-10
+
+Performance release for large workspaces. The sidebar now loads request
+summaries instead of full request payloads, counts a collection once per
+load instead of once per header and frame (which made large trees quadratic
+per frame), and filters with case-folded names and URLs prepared at load.
+Sending a request refreshes only the history pane.
+
+Measured on 10k requests: the tree load drops from ~520 ms and 114 MB to
+~80–100 ms and 9 MB; rebuilding the rows from ~7 ms to ~3.5 ms; a frame's
+100 collection headers from ~22 ms to ~5 µs. Benchmarks are in
+`pkg/store/bench_test.go` and `perf_bench_test.go`.
+
 ## 0.2.2 — 2026-11-10
 
 The update window now calls the app **Reqbox Go** as well: its messages took
