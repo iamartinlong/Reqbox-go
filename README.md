@@ -8,6 +8,14 @@ Reqbox Go 是 Reqbox 的原生桌面客户端：使用 Go 与
 [mygo](https://github.com/egoist/mygo) 即时模式 UI 直接绘制界面，不依赖 WebView；
 内置 HTTP 执行器与 SQLite 存储，单文件即可运行。数据格式与 Reqbox 保持一致。
 
+## 界面
+
+| 深色主题 | 浅色主题 |
+| --- | --- |
+| ![Reqbox Go 深色主题](docs/screenshots/main-dark.png) | ![Reqbox Go 浅色主题](docs/screenshots/main-light.png) |
+
+![环境管理](docs/screenshots/environments.png)
+
 ## 功能特性
 
 - **请求编辑**：方法 / URL、Params、Headers、Form 键值表、Body、Auth，支持 cURL 导入
